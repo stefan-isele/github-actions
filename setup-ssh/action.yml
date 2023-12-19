@@ -1,21 +1,22 @@
 name: 'Setup SSH'
 description: 'Sets up SSH for the runner'
 inputs:
-  ssh-private-key:
-    description: 'Private key for SSH'
+  deployment-server-ip:
+    description: 'Deployment server IP address'
     required: true
-  server-ip:
-    description: 'Server IP address'
-    required: true
-  known-host:
-    description: 'Known host key'
+  deployment-server-ssh-private-key:
+    description: 'Private SSH key for the deployment server'
     required: true
 runs:
   using: 'composite'
   steps:
-    - run: |
+    - name: Install ssh-keyscan
+      run: sudo apt-get install -y openssh-client
+      shell: bash
+    - name: Setup SSH
+      run: |
         mkdir -p ~/.ssh
-        echo "${{ inputs.ssh-private-key }}" > ~/.ssh/id_rsa
+        echo "${{ inputs.deployment-server-ssh-private-key }}" > ~/.ssh/id_rsa
         chmod 600 ~/.ssh/id_rsa
-        echo "${{ inputs.server-ip }} ssh-rsa ${{ inputs.known-host }}" >> ~/.ssh/known_hosts
+        ssh-keyscan -t rsa ${{ inputs.deployment-server-ip }} >> ~/.ssh/known_hosts
       shell: bash
