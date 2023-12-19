@@ -1,0 +1,21 @@
+name: 'Checkout repo on deployment server'
+description: 'Checks out the repository on the deployment server'
+inputs:
+  ssh-private-key:
+    description: 'Private key for SSH'
+    required: true
+  server-ip:
+    description: 'Server IP address'
+    required: true
+  repo-name:
+    description: 'Name of the repository to checkout'
+    required: true
+runs:
+  using: 'composite'
+  steps:
+    - run: |
+        mkdir -p ~/.ssh
+        echo "${{ inputs.ssh-private-key }}" > ~/.ssh/id_rsa
+        chmod 600 ~/.ssh/id_rsa
+        ssh -o StrictHostKeyChecking=no ${{ inputs.server-ip }} "git clone https://github.com/my-org/${{ inputs.repo-name }}.git"
+      shell: bash

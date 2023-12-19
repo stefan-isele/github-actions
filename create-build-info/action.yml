@@ -1,0 +1,28 @@
+name: 'Create build.info'
+description: 'create build.info with data of the current build'
+inputs:
+  deployment-server-user:
+    description: 'Deployment server username'
+    required: true
+  deployment-server-ip:
+    description: 'Deployment server IP address'
+    required: true
+  repo-path:
+    description: 'Path to the repository on the server'
+    required: true
+runs:
+  using: 'composite'
+  steps:
+    - name: Get current date and time
+      id: build_time
+      run: echo "::set-output name=build_time::$(date +'%d-%m-%Y %H:%M:%S')"
+      shell: bash
+    - name: Replace placeholders on server
+      run: |
+        ssh ${{ inputs.deployment-server-user }}@${{ inputs.deployment-server-ip }} "cp ${INPUT_REPO_PATH}/build-info.template.json ${INPUT_REPO_PATH}/build-info.json"
+        ssh ${{ inputs.deployment-server-user }}@${{ inputs.deployment-server-ip }} "sed -i 's#\${REPO_NAME}#${{ github.repository }}#g' ${INPUT_REPO_PATH}/build-info.json"
+        ssh ${{ inputs.deployment-server-user }}@${{ inputs.deployment-server-ip }} "sed -i 's#\${REPO_URL}#https://github.com/${{ github.repository }}#g' ${INPUT_REPO_PATH}/build-info.json"
+        ssh ${{ inputs.deployment-server-user }}@${{ inputs.deployment-server-ip }} "sed -i 's#\${COMMIT_NUMBER}#${{ github.sha }}#g' ${INPUT_REPO_PATH}/build-info.json"
+        ssh ${{ inputs.deployment-server-user }}@${{ inputs.deployment-server-ip }} "sed -i 's#\${COMMIT_URL}#https://github.com/${{ github.repository }}/commit/${{ github.sha }}#g' ${INPUT_REPO_PATH}/build-info.json"
+        ssh ${{ inputs.deployment-server-user }}@${{ inputs.deployment-server-ip }} "sed -i 's#\${BUILD_TIME}#${{ steps.build_time.outputs.build_time }}#g' ${INPUT_REPO_PATH}/build-info.json"
+      shell: bash

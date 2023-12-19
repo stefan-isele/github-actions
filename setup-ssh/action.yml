@@ -1,0 +1,21 @@
+name: 'Setup SSH'
+description: 'Sets up SSH for the runner'
+inputs:
+  ssh-private-key:
+    description: 'Private key for SSH'
+    required: true
+  server-ip:
+    description: 'Server IP address'
+    required: true
+  known-host:
+    description: 'Known host key'
+    required: true
+runs:
+  using: 'composite'
+  steps:
+    - run: |
+        mkdir -p ~/.ssh
+        echo "${{ inputs.ssh-private-key }}" > ~/.ssh/id_rsa
+        chmod 600 ~/.ssh/id_rsa
+        echo "${{ inputs.server-ip }} ssh-rsa ${{ inputs.known-host }}" >> ~/.ssh/known_hosts
+      shell: bash
