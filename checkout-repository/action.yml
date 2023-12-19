@@ -17,7 +17,7 @@ inputs:
     description: 'Name of the repository'
     required: true
   secrets_GITHUB_TOKEN:
-    description: 'the secrets.GITHUB_TOKEN of the calling action. This action has access to it, so need to pass as input with value ${{ secrets.GITHUB_TOKEN }}'
+    description: 'the secrets.GITHUB_TOKEN of the calling action. This action has access to it, so need to pass as input with value secrets.GITHUB_TOKEN '
     required: true
 runs:
   using: 'composite'
