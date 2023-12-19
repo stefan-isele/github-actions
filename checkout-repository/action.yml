@@ -1,21 +1,41 @@
 name: 'Checkout repo on deployment server'
 description: 'Checks out the repository on the deployment server'
 inputs:
-  ssh-private-key:
-    description: 'Private key for SSH'
+  deployment-server-user:
+    description: 'Deployment server username'
     required: true
-  server-ip:
-    description: 'Server IP address'
+  deployment-server-ip:
+    description: 'Deployment server IP address'
+    required: true
+  github-token:
+    description: 'GitHub token'
+    required: true
+  repo-parent:
+    description: 'Parent directory of the repository on the deployment server'
+    required: true
+  repo-path:
+    description: 'Path to the repository on the deployment server'
     required: true
   repo-name:
-    description: 'Name of the repository to checkout'
+    description: 'Name of the repository'
+    required: true
+  github-ref:
+    description: 'GitHub reference (branch or tag)'
     required: true
 runs:
   using: 'composite'
   steps:
-    - run: |
-        mkdir -p ~/.ssh
-        echo "${{ inputs.ssh-private-key }}" > ~/.ssh/id_rsa
-        chmod 600 ~/.ssh/id_rsa
-        ssh -o StrictHostKeyChecking=no ${{ inputs.server-ip }} "git clone https://github.com/my-org/${{ inputs.repo-name }}.git"
+    - name: Checkout repo on deployment server
+      run: |
+        echo "REPO_PARENT: ${{ inputs.repo-parent }}"
+        echo "REPO_PATH: ${{ inputs.repo-path }}"
+        echo "REPO_NAME: ${{ inputs.repo-name }}"
+        ssh ${{ inputs.deployment-server-user }}@${{ inputs.deployment-server-ip }} "\
+          if [ -d ${{ inputs.repo-path }}/.git ]; then 
+            echo "Repo exists, will fetch and checkout"                                    
+            cd ${{ inputs.repo-path }} && git fetch https://x-access-token:${{ inputs.github-token }}@github.com/$GITHUB_REPOSITORY.git ${{ inputs.github-ref }} && git checkout ${{ inputs.github-ref }} && git pull https://x-access-token:${{ inputs.github-token }}@github.com/$GITHUB_REPOSITORY.git; 
+          else             
+            echo "Repo does not exist, will clone"
+            cd ${{ inputs.repo-parent }} && git clone --branch ${{ inputs.github-ref }} https://x-access-token:${{ inputs.github-token }}@github.com/$GITHUB_REPOSITORY.git ${{ inputs.repo-name }};
+          fi"
       shell: bash
