@@ -34,9 +34,7 @@ env:
 * DEPLOYMENT_SERVER_SSH_PRIVATE_KEY
 * DEPLOYMENT_SERVER_USER
 
-
-
-### Checkout repo on deployment server
+### Checkout Repository on Deployment Server
 
 Located in [checkout-repository/action.yml](checkout-repository/action.yml)
 
@@ -54,20 +52,18 @@ This action checks out the repository on the deployment server.
 
 #### Example Usage
 
-Here's an example of how you can use the `Checkout repo on deployment server` action in a workflow:
+Here's an example of how you can use the `Checkout Repository on Deployment Server` action in a workflow:
 
 ```yaml
-...
-- name: Checkout repo on deployment server
-  uses: stefan-isele/github-actions/checkout-repository@main
-  with:
-    deployment-server-user: ${{ secrets.DEPLOYMENT_SERVER_USER }}
-    deployment-server-ip: ${{ secrets.DEPLOYMENT_SERVER_IP }}
-    github-token: ${{ secrets.GITHUB_TOKEN }}
-    repo-parent: '/path/to/repo/parent'
-    repo-path: '/path/to/repo'
-    repo-name: 'repo-name'
-    github-ref: 'main'
+        - name: Checkout repo on deployment server
+          uses: stefan-isele/github-actions/checkout-repository@main
+          with:
+            deployment-server-user: ${{ secrets.DEPLOYMENT_SERVER_USER }}
+            deployment-server-ip: ${{ secrets.DEPLOYMENT_SERVER_IP }}
+            repo-parent: $REPO_PARENT
+            repo-path: $REPO_PATH
+            repo-name: $REPO_NAME
+            secrets_GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 ```
 
 ### Create Build Info
@@ -106,13 +102,12 @@ This action creates a `build.info` file with data of the current build. You need
 Here's an example of how you can use the `Create Build Info` action in a workflow:
 
 ```yaml
-...
     - name: Create Build Info
       uses: stefan-isele/github-actions/create-build-info@main
       with:
         deployment-server-user: ${{ secrets.DEPLOYMENT_SERVER_USER }}
         deployment-server-ip: ${{ secrets.DEPLOYMENT_SERVER_IP }}
-        repo-path: /path/to/repo/on/server
+        repo-path: $REPO_PATH
 ```
 
 ### Setup SSH
