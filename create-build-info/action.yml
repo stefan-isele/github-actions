@@ -19,10 +19,10 @@ runs:
       shell: bash
     - name: Replace placeholders on server
       run: |
-        ssh ${{ inputs.deployment-server-user }}@${{ inputs.deployment-server-ip }} "cp ${inputs.repo-path}/build-info.template.json ${inputs.repo-path}/build-info.json"
-        ssh ${{ inputs.deployment-server-user }}@${{ inputs.deployment-server-ip }} "sed -i 's#\${REPO_NAME}#${{ github.repository }}#g' ${inputs.repo-path}/build-info.json"
-        ssh ${{ inputs.deployment-server-user }}@${{ inputs.deployment-server-ip }} "sed -i 's#\${REPO_URL}#https://github.com/${{ github.repository }}#g' ${inputs.repo-path}/build-info.json"
-        ssh ${{ inputs.deployment-server-user }}@${{ inputs.deployment-server-ip }} "sed -i 's#\${COMMIT_NUMBER}#${{ github.sha }}#g' ${inputs.repo-path}/build-info.json"
-        ssh ${{ inputs.deployment-server-user }}@${{ inputs.deployment-server-ip }} "sed -i 's#\${COMMIT_URL}#https://github.com/${{ github.repository }}/commit/${{ github.sha }}#g' ${inputs.repo-path}/build-info.json"
-        ssh ${{ inputs.deployment-server-user }}@${{ inputs.deployment-server-ip }} "sed -i 's#\${BUILD_TIME}#${{ steps.build_time.outputs.build_time }}#g' ${inputs.repo-path}/build-info.json"
+        ssh ${{ inputs.deployment-server-user }}@${{ inputs.deployment-server-ip }} "cp ${{ inputs.repo-path }}/build-info.template.json ${{ inputs.repo-path }}/build-info.json"
+        ssh ${{ inputs.deployment-server-user }}@${{ inputs.deployment-server-ip }} "sed -i 's#\${REPO_NAME}#${{ github.repository }}#g' ${{ inputs.repo-path }}/build-info.json"
+        ssh ${{ inputs.deployment-server-user }}@${{ inputs.deployment-server-ip }} "sed -i 's#\${REPO_URL}#https://github.com/${{ github.repository }}#g' ${{ inputs.repo-path }}/build-info.json"
+        ssh ${{ inputs.deployment-server-user }}@${{ inputs.deployment-server-ip }} "sed -i 's#\${COMMIT_NUMBER}#${{ github.sha }}#g' ${{ inputs.repo-path }}/build-info.json"
+        ssh ${{ inputs.deployment-server-user }}@${{ inputs.deployment-server-ip }} "sed -i 's#\${COMMIT_URL}#https://github.com/${{ github.repository }}/commit/${{ github.sha }}#g' ${{ inputs.repo-path }}/build-info.json"
+        ssh ${{ inputs.deployment-server-user }}@${{ inputs.deployment-server-ip }} "sed -i 's#\${BUILD_TIME}#${{ steps.build_time.outputs.build_time }}#g' ${{ inputs.repo-path }}/build-info.json"
       shell: bash
