@@ -22,7 +22,7 @@ inputs:
 runs:
   using: 'composite'
   steps:
-    - name: Checkout repo on deployment server
+    - name: Checkout repo on deployment server- using --force and overrides all uncommitted changes on the deployment server !!!!
       run: |
         echo "REPO_PARENT: ${{ inputs.repo-parent }}"
         echo "REPO_PATH: ${{ inputs.repo-path }}"
@@ -30,7 +30,7 @@ runs:
         ssh ${{ inputs.deployment-server-user }}@${{ inputs.deployment-server-ip }} "\
           if [ -d ${{ inputs.repo-path }}/.git ]; then 
             echo "Repo exists, will fetch and checkout"                                    
-            cd ${{ inputs.repo-path }} && git fetch https://x-access-token:${{ inputs.secrets_GITHUB_TOKEN }}@github.com/$GITHUB_REPOSITORY.git ${GITHUB_REF#refs/heads/} && git checkout ${GITHUB_REF#refs/heads/} && git pull https://x-access-token:${{ inputs.secrets_GITHUB_TOKEN }}@github.com/$GITHUB_REPOSITORY.git; 
+            cd ${{ inputs.repo-path }} && git fetch https://x-access-token:${{ inputs.secrets_GITHUB_TOKEN }}@github.com/$GITHUB_REPOSITORY.git ${GITHUB_REF#refs/heads/} && git checkout -f ${GITHUB_REF#refs/heads/} && git pull https://x-access-token:${{ inputs.secrets_GITHUB_TOKEN }}@github.com/$GITHUB_REPOSITORY.git; 
           else             
             echo "Repo does not exist, will clone"
             cd ${{ inputs.repo-parent }} && git clone --branch ${GITHUB_REF#refs/heads/} https://x-access-token:${{ inputs.secrets_GITHUB_TOKEN }}@github.com/$GITHUB_REPOSITORY.git ${{ inputs.repo-name }};
