@@ -21,8 +21,7 @@ inputs:
     required: true
   force:
     description: 'Whether to force the checkout and remove all local changes'
-    required: false
-    default: 'false'    
+    required: true
 runs:
   using: 'composite'
   steps:
