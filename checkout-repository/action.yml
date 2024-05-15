@@ -30,10 +30,17 @@ runs:
         echo "REPO_PARENT: ${{ inputs.repo-parent }}"
         echo "REPO_PATH: ${{ inputs.repo-path }}"
         echo "REPO_NAME: ${{ inputs.repo-name }}"
+        
         ssh ${{ inputs.deployment-server-user }}@${{ inputs.deployment-server-ip }} "\
           if [ -d ${{ inputs.repo-path }}/.git ]; then 
-            echo "Repo exists, will fetch and checkout"                                    
-            cd ${{ inputs.repo-path }} && git fetch https://x-access-token:${{ inputs.secrets_GITHUB_TOKEN }}@github.com/$GITHUB_REPOSITORY.git ${GITHUB_REF#refs/heads/} && git reset --hard HEAD && git clean -fd && git checkout ${${ inputs.force } ? '-f' : ''} ${GITHUB_REF#refs/heads/} && git pull https://x-access-token:${{ inputs.secrets_GITHUB_TOKEN }}@github.com/$GITHUB_REPOSITORY.git; 
+          echo "Repo exists, will fetch and checkout with force = ${{ inputs.force }}"
+            cd ${{ inputs.repo-path }} && git fetch https://x-access-token:${{ inputs.secrets_GITHUB_TOKEN }}@github.com/$GITHUB_REPOSITORY.git ${GITHUB_REF#refs/heads/}
+            if [ '${{ inputs.force }}' = 'true' ]; then
+              git reset --hard HEAD && git clean -fd && git checkout -f ${GITHUB_REF#refs/heads/}
+            else
+              git checkout ${GITHUB_REF#refs/heads/}
+            fi
+            git pull https://x-access-token:${{ inputs.secrets_GITHUB_TOKEN }}@github.com/$GITHUB_REPOSITORY.git; 
           else             
             echo "Repo does not exist, will clone"
             cd ${{ inputs.repo-parent }} && git clone --branch ${GITHUB_REF#refs/heads/} https://x-access-token:${{ inputs.secrets_GITHUB_TOKEN }}@github.com/$GITHUB_REPOSITORY.git ${{ inputs.repo-name }};
